@@ -24,7 +24,9 @@ zero. Furthermore, the value `100.54` can be any arbitrary floating-point number
 greater than zero.
 
 A trailing newline MAY follow the output JSON, if it aids the player program's
-implementation. However, the output JSON MUST NOT contain any whitespace
+implementation. However, the output JSON MUST NOT contain any whitespace.
+
+The program MUST NOT make any assumptions about the key order of the input JSON.
 
 ### Output
 
@@ -42,3 +44,6 @@ The output JSON MUST be preceded by a NUL character (`\0` or `\u0000`).
 
 A trailing newline MAY follow the output JSON, if it aids the player program's
 implementation. However, the output JSON MUST NOT contain any whitespace.
+
+The program MUST NOT make any assumptions about the key order of the output
+JSON.
