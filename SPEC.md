@@ -21,7 +21,7 @@ Each program file MUST accept as stdin a JSON object in the following format:
 
 In the above example, the value `1692` can be any arbitrary integer greater than
 zero. Furthermore, the value `100.54` can be any arbitrary floating-point number
-greater than zero.
+greater than zero. These numbers will not exceed 2^16 - 1 (or 65,535).
 
 A trailing newline MAY follow the output JSON, if it aids the player program's
 implementation. However, the output JSON MUST NOT contain any whitespace.
@@ -38,7 +38,8 @@ and print to stdout a JSON object in the following format:
 ```
 
 In the above example, the values `1`, `2`, `3`, and `4` can be any arbitrary
-integers greater than or equal to zero.
+integers greater than or equal to zero. These integers will not exceed 2^16 - 1
+(or 65,535).
 
 The output JSON MUST be preceded by a NUL character (`\0` or `\u0000`).
 
