@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
+import collections
 import math
 import itertools
-from collections import OrderedDict
 
 
 # Constants
@@ -20,7 +20,7 @@ COIN_TYPES = ['pennies', 'nickels', 'dimes', 'quarters']
 # sum to those respective amounts; the structure is an OrderedDict with the
 # keys sorted from smallest to largest; each row of additions/subtractions must
 # sum to zero
-COIN_SUMS = OrderedDict(sorted({
+COIN_SUMS = collections.OrderedDict(sorted({
     0.05: {'quarters': 0, 'dimes': +1, 'nickels': -1},
     0.10: {'quarters': 1, 'dimes': -2, 'nickels': +1},
     0.15: {'quarters': 1, 'dimes': -1, 'nickels': -0},
@@ -93,16 +93,30 @@ def perform_adjustment_substitutions(coin_counts, total_coin_amount):
             break
 
 
+def get_partial_sums(count):
+
+    map = collections.defaultdict(list)
+    sums = set()
+
+    for i in range(count + 1):
+        for j in range(count + 1):
+            partial_sum = count - (i + j)
+            map[i + j].append((i, j))
+            if partial_sum in map:
+                for x, y in map[partial_sum]:
+                    sums.update(itertools.permutations((i, j, x, y)))
+
+    return sums
+
+
 # Search all possible permutations of coin counts until a satisfactory
 # permutation is found
 def brute_force(coin_counts, total_coin_count, total_coin_amount):
 
-    count_permutations = itertools.product(range(total_coin_count + 1),
-                                           repeat=len(COIN_TYPES))
+    count_permutations = get_partial_sums(total_coin_count)
     counts_list = next(
         p for p in count_permutations
-        if sum(p) == total_coin_count
-        and round(sum(c * v for c, v in zip(p, AMOUNT_VALUES)), 2)
+        if round(sum(c * v for c, v in zip(p, AMOUNT_VALUES)), 2)
         == total_coin_amount)
     coin_counts.update(
         {coin_type: coin_count
