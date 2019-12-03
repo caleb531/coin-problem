@@ -4,9 +4,12 @@ import argparse
 import json
 import random
 
+import pexpect
+
 from player import Player
 
 
+i = 0
 # Constants
 PENNY_VALUE = 0.01
 NICKEL_VALUE = 0.05
@@ -29,7 +32,7 @@ def parse_cli_args():
         '--timeout',
         '-t',
         type=int,
-        default=180,
+        default=3,
         help='the number of seconds each player will run before timing out')
     parser.add_argument(
         '--min-count',
@@ -89,28 +92,35 @@ def generate_input(min_count, max_count):
 def run_round(players, min_count, max_count, timeout):
     input_data = generate_input(min_count, max_count)
     for player in players:
-        print(json.dumps(input_data))
-        player.program.sendline(json.dumps(input_data))
-        player.program.expect('\0')
         try:
+            if not player.program.isalive():
+                continue
+            player.program.sendline(json.dumps(input_data))
+            player.program.expect('\0')
             output_data = json.loads(player.program.buffer.strip())
             if (get_total_count(output_data) == input_data['count'] and
                     get_total_amount(output_data) == input_data['amount']):
                 player.total_correct += 1
             else:
                 player.total_incorrect += 1
+        except pexpect.exceptions.TIMEOUT:
+            print('program {} has timed out'.format(
+                player.program.args[0].decode('utf-8')))
         except Exception as error:
             player.total_error += 1
             print('error for program {}: {}'.format(
-                player.args[0].decode('utf-8'),
+                player.program.args[0].decode('utf-8'),
                 error))
 
 
 def main():
 
-    params = parse_cli_args()
-    while True:
-        run_round(**vars(params))
+    try:
+        params = parse_cli_args()
+        while True:
+            run_round(**vars(params))
+    except KeyboardInterrupt:
+        print()
 
 
 if __name__ == '__main__':
