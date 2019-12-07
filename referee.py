@@ -150,6 +150,15 @@ def run_rounds_for_player(player, min_count, max_count):
             print(f'error for P{player.index}: {error}')
 
 
+# Print the parameters for this duel
+def print_duel_info(players, min_count, max_count, timeout):
+    print(f'min count per coin type: {min_count}')
+    print(f'max count per coin type: {max_count}')
+    print(f'timeout per player: {timeout:,} s')
+    print()
+    print_player_info(players)
+
+
 # Print the number and program path for each player
 def print_player_info(players):
     for p, player in enumerate(players):
@@ -169,7 +178,7 @@ def print_duel_results(players):
 
 def run_duel(players, min_count, max_count, timeout):
 
-    print_player_info(players)
+    print_duel_info(players, min_count, max_count, timeout)
 
     for player in players:
         reset_inputs()
