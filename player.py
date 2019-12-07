@@ -13,5 +13,4 @@ class Player(object):
         self.total_error = 0
 
     def start_program(self):
-        # TODO: remove this arbitrary timeout
-        self.program = pexpect.spawnu(self.path, timeout=1)
+        self.program = pexpect.spawnu(self.path)

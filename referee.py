@@ -2,12 +2,11 @@
 
 import argparse
 import json
-import multiprocessing
 import random
-import time
 
 import pexpect
 
+import timer
 from player import Player
 
 
@@ -16,6 +15,11 @@ PENNY_VALUE = 0.01
 NICKEL_VALUE = 0.05
 DIME_VALUE = 0.1
 QUARTER_VALUE = 0.25
+
+
+# Globals
+inputs = []
+next_input_index = 0
 
 
 # Parse command-line arguments passed to referee player
@@ -69,7 +73,7 @@ def get_total_amount(coin_counts):
         coin_counts['pennies'] * PENNY_VALUE)), 2)
 
 
-def generate_input(min_count, max_count):
+def generate_new_input(min_count, max_count):
 
     coin_counts = {
         'pennies': random.randint(min_count, max_count),
@@ -88,67 +92,93 @@ def generate_input(min_count, max_count):
     }
 
 
+# Get the next input, either generate it on-the-fly or retrieve from file
+def reset_inputs():
+    global next_input_index
+
+    next_input_index = 0
+
+
+# Get the next input, either generate it on-the-fly or retrieve from file
+def get_next_input(min_count, max_count):
+    global inputs
+    global next_input_index
+
+    if next_input_index < len(inputs):
+        next_input = inputs[next_input_index]
+        next_input_index += 1
+    else:
+        next_input = generate_new_input(min_count, max_count)
+        inputs.append(next_input)
+        next_input_index += 1
+    return next_input
+
+
 # Print information for the player's current input
-def print_current_input(player, count, amount):
-    print(f'{player.path}: count={count}, amount=${amount}')
+def print_next_input(player, count, amount):
+    print(f'P{player.index}: count = {count}, amount = ${amount}')
 
 
 # Run a single round by generating random input and passing it to both player
 # programs
-def run_rounds_for_player(player, inputs, lock, queue):
+def run_rounds_for_player(player, min_count, max_count, timeout):
     player.start_program()
-    for current_input in inputs:
-        try:
-            if not player.program.isalive():
-                with lock:
-                    print(f'{player.path} no longer alive')
-                continue
-            print_current_input(player, **current_input)
-            player.program.sendline(json.dumps(current_input))
-            player.program.expect_exact('\0')
-            output_data = json.loads(player.program.buffer.strip())
-            if (get_total_count(output_data) == current_input['count'] and
-                    get_total_amount(output_data) == current_input['amount']):
-                player.total_correct += 1
-            else:
-                player.total_incorrect += 1
-        except pexpect.exceptions.TIMEOUT:
-            with lock:
-                print(f'{player.path} has timed out')
+    with timer.Timer(timeout):
+        while True:
+            next_input = get_next_input(min_count, max_count)
+            try:
+                if not player.program.isalive():
+                    print(f'P{player.index} no longer alive')
+                    continue
+                print_next_input(player, **next_input)
+                player.program.sendline(json.dumps(next_input))
+                player.program.expect_exact('\0')
+                output_data = json.loads(player.program.buffer.strip())
+                if (get_total_count(output_data) == next_input['count'] and
+                        get_total_amount(output_data) == next_input['amount']):
+                    player.total_correct += 1
+                else:
+                    player.total_incorrect += 1
+            except pexpect.exceptions.TIMEOUT:
+                print(f'P{player.index} has timed out for {next_input}')
+            except timer.TimeoutError:
+                print()
+                print(f'referee timeout expired; ending P{player.index}')
+                print()
                 break
-        except Exception as error:
-            player.total_error += 1
-            with lock:
-                print(f'error for {player.path}: {error}')
-    queue.put(player)
+            except Exception as error:
+                player.total_error += 1
+                print(f'error for P{player.index}: {error}')
 
 
-def start_processes(processes):
-    for process in processes:
-        process.start()
+# Print the number and program path for each player
+def print_player_info(players):
+    for p, player in enumerate(players):
+        player.index = p
+        print(f'P{player.index}: {player.path}')
+    print()
 
 
-def get_results_from_players(processes):
-    for process in processes:
-        process.join()
-        yield process.get()
+# Print the final correct/incorrect stats for each player
+def print_duel_results(players):
+    for p, player in enumerate(players):
+        print(f'P{player.index} results:')
+        print(f'  correct = {player.total_correct}')
+        print(f'  incorrect = {player.total_incorrect}')
+        print(f'  error = {player.total_error}')
 
 
 def run_duel(players, min_count, max_count, timeout):
-    inputs = [generate_input(min_count, max_count)
-              for i in range(10_000)]
 
-    lock = multiprocessing.RLock()
-    queue = multiprocessing.Queue()
+    print_player_info(players)
 
-    processes = [multiprocessing.Process(
-        target=run_rounds_for_player,
-        args=(player, inputs, lock, queue)) for player in players]
+    for player in players:
+        reset_inputs()
+        run_rounds_for_player(player, min_count, max_count, timeout)
 
-    start_processes(processes)
-    results = get_results_from_players(processes)
+    print_duel_results(players)
 
-    return results
+    return players
 
 
 def main():
