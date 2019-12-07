@@ -37,7 +37,7 @@ def parse_cli_args():
         '--timeout',
         '-t',
         type=int,
-        default=3,
+        default=10,
         help='the number of seconds each player will run before timing out')
     parser.add_argument(
         '--min-count',
