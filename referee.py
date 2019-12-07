@@ -44,7 +44,7 @@ def parse_cli_args():
         '--min',
         metavar='--min',
         type=int,
-        default=1,
+        default=0,
         help='the minimum number of coins per coin type to be generated')
     parser.add_argument(
         '--max-count',
