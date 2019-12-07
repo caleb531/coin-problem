@@ -2,14 +2,15 @@
 
 import argparse
 import json
+import multiprocessing
 import random
+import time
 
 import pexpect
 
 from player import Player
 
 
-i = 0
 # Constants
 PENNY_VALUE = 0.01
 NICKEL_VALUE = 0.05
@@ -87,38 +88,74 @@ def generate_input(min_count, max_count):
     }
 
 
+# Print information for the player's current input
+def print_current_input(player, count, amount):
+    print(f'{player.path}: count={count}, amount=${amount}')
+
+
 # Run a single round by generating random input and passing it to both player
 # programs
-def run_round(players, min_count, max_count, timeout):
-    input_data = generate_input(min_count, max_count)
-    for player in players:
+def run_rounds_for_player(player, inputs, lock, queue):
+    player.start_program()
+    for current_input in inputs:
         try:
             if not player.program.isalive():
+                with lock:
+                    print(f'{player.path} no longer alive')
                 continue
-            player.program.sendline(json.dumps(input_data))
-            player.program.expect('\0')
+            print_current_input(player, **current_input)
+            player.program.sendline(json.dumps(current_input))
+            player.program.expect_exact('\0')
             output_data = json.loads(player.program.buffer.strip())
-            if (get_total_count(output_data) == input_data['count'] and
-                    get_total_amount(output_data) == input_data['amount']):
+            if (get_total_count(output_data) == current_input['count'] and
+                    get_total_amount(output_data) == current_input['amount']):
                 player.total_correct += 1
             else:
                 player.total_incorrect += 1
         except pexpect.exceptions.TIMEOUT:
-            print('program {} has timed out'.format(
-                player.program.args[0].decode('utf-8')))
+            with lock:
+                print(f'{player.path} has timed out')
+                break
         except Exception as error:
             player.total_error += 1
-            print('error for program {}: {}'.format(
-                player.program.args[0].decode('utf-8'),
-                error))
+            with lock:
+                print(f'error for {player.path}: {error}')
+    queue.put(player)
+
+
+def start_processes(processes):
+    for process in processes:
+        process.start()
+
+
+def get_results_from_players(processes):
+    for process in processes:
+        process.join()
+        yield process.get()
+
+
+def run_duel(players, min_count, max_count, timeout):
+    inputs = [generate_input(min_count, max_count)
+              for i in range(10_000)]
+
+    lock = multiprocessing.RLock()
+    queue = multiprocessing.Queue()
+
+    processes = [multiprocessing.Process(
+        target=run_rounds_for_player,
+        args=(player, inputs, lock, queue)) for player in players]
+
+    start_processes(processes)
+    results = get_results_from_players(processes)
+
+    return results
 
 
 def main():
 
     try:
         params = parse_cli_args()
-        while True:
-            run_round(**vars(params))
+        run_duel(**vars(params))
     except KeyboardInterrupt:
         print()
 
