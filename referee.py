@@ -121,34 +121,33 @@ def print_next_input(player, count, amount):
 
 # Run a single round by generating random input and passing it to both player
 # programs
-def run_rounds_for_player(player, min_count, max_count, timeout):
+def run_rounds_for_player(player, min_count, max_count):
     player.start_program()
-    with timer.Timer(timeout):
-        while True:
-            next_input = get_next_input(min_count, max_count)
-            try:
-                if not player.program.isalive():
-                    print(f'P{player.index} no longer alive')
-                    continue
-                print_next_input(player, **next_input)
-                player.program.sendline(json.dumps(next_input))
-                player.program.expect_exact('\0')
-                output_data = json.loads(player.program.buffer.strip())
-                if (get_total_count(output_data) == next_input['count'] and
-                        get_total_amount(output_data) == next_input['amount']):
-                    player.total_correct += 1
-                else:
-                    player.total_incorrect += 1
-            except pexpect.exceptions.TIMEOUT:
-                print(f'P{player.index} has timed out for {next_input}')
-            except timer.TimeoutError:
-                print()
-                print(f'referee timeout expired; ending P{player.index}')
-                print()
-                break
-            except Exception as error:
-                player.total_error += 1
-                print(f'error for P{player.index}: {error}')
+    while True:
+        next_input = get_next_input(min_count, max_count)
+        try:
+            if not player.program.isalive():
+                print(f'P{player.index} no longer alive')
+                continue
+            print_next_input(player, **next_input)
+            player.program.sendline(json.dumps(next_input))
+            player.program.expect_exact('\0')
+            output_data = json.loads(player.program.buffer.strip())
+            if (get_total_count(output_data) == next_input['count'] and
+                    get_total_amount(output_data) == next_input['amount']):
+                player.total_correct += 1
+            else:
+                player.total_incorrect += 1
+        except pexpect.exceptions.TIMEOUT:
+            print(f'P{player.index} has timed out for {next_input}')
+        except timer.TimeoutError:
+            print()
+            print(f'referee timeout expired; ending P{player.index}')
+            print()
+            break
+        except Exception as error:
+            player.total_error += 1
+            print(f'error for P{player.index}: {error}')
 
 
 # Print the number and program path for each player
@@ -174,7 +173,8 @@ def run_duel(players, min_count, max_count, timeout):
 
     for player in players:
         reset_inputs()
-        run_rounds_for_player(player, min_count, max_count, timeout)
+        with timer.Timer(timeout):
+            run_rounds_for_player(player, min_count, max_count)
 
     print_duel_results(players)
 
