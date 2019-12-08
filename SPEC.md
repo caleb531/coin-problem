@@ -13,10 +13,10 @@ applicable, remember to specify a shebang (`#!`) line fo your program.
 
 ### Input
 
-Each program file MUST accept as stdin a JSON object in the following format:
+Each program file MUST accept as stdin two numbers, separated by a comma.
 
 ```json
-{"count":1692,"amount":100.54}
+1692,100.54
 ```
 
 In the above example, the value `1692` can be any arbitrary integer greater than

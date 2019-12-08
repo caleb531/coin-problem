@@ -9,10 +9,10 @@ def main():
 
     try:
         while True:
-            params = json.loads(input(''))
+            count, amount = input('').split(',')
             coin_counts = coin_solver.get_coin_counts(
-                total_coin_count=params['count'],
-                total_coin_amount=params['amount'])
+                total_coin_count=int(count),
+                total_coin_amount=float(amount))
             print('\0' + json.dumps(coin_counts, separators=(',', ':')))
     except Exception:
         print('\0{}')

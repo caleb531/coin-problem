@@ -130,7 +130,10 @@ def run_rounds_for_player(player, min_count, max_count):
                 print('P{} no longer alive'.format(player.index))
                 continue
             print_next_input(player, **next_input)
-            player.program.sendline(json.dumps(next_input))
+            player.program.sendline(','.join((
+                str(next_input['count']),
+                str(next_input['amount'])
+            )))
             player.program.expect_exact('\0')
             output_data = json.loads(player.program.buffer.strip())
             if (get_total_count(output_data) == next_input['count'] and
