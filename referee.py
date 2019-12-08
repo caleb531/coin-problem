@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding=utf-8
 
 import argparse
 import json
@@ -116,7 +117,8 @@ def get_next_input(min_count, max_count):
 
 # Print information for the player's current input
 def print_next_input(player, count, amount):
-    print('P{}: count = {}, amount = ${}'.format(player.index, count, amount))
+    print('P{}: count = {}, amount = ${}'.format(player.index, count, amount),
+          end=' ', flush=True)
 
 
 # Run a single round by generating random input and passing it to both player
@@ -139,8 +141,10 @@ def run_rounds_for_player(player, min_count, max_count):
             if (get_total_count(output_data) == next_input['count'] and
                     get_total_amount(output_data) == next_input['amount']):
                 player.total_correct += 1
+                print('✓')
             else:
                 player.total_incorrect += 1
+                print('×')
         except pexpect.exceptions.TIMEOUT:
             print('P{} has timed out for {}'.format(
                 player.index,
