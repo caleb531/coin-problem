@@ -184,6 +184,7 @@ def print_duel_results(players):
         print('P{} results:'.format(player.index))
         print('  correct = {:,}'.format(player.total_correct))
         print('  incorrect = {:,}'.format(player.total_incorrect))
+        print('  success = {:,.1f} %'.format(player.get_success_rate() * 100))
         print('  error = {:,}'.format(player.total_error))
 
 

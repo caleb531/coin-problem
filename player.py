@@ -14,3 +14,9 @@ class Player(object):
 
     def start_program(self):
         self.program = pexpect.spawnu(self.path)
+
+    def get_success_rate(self):
+        if self.total_correct:
+            return 1 - (self.total_incorrect / self.total_correct)
+        else:
+            return 0
