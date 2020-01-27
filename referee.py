@@ -117,9 +117,8 @@ def get_next_input(min_count, max_count):
 
 # Print information for the player's current input
 def print_next_input(player, count, amount):
-    print('P{}: count = {:,}, amount = ${:,.2f}'.format(
-        player.index, count, amount),
-        end=' ', flush=True)
+    print(f'P{player.index}: count = {count:,}, amount = ${amount:,.2f}',
+          end=' ', flush=True)
 
 
 # Run a single round by generating random input and passing it to both player
@@ -130,7 +129,7 @@ def run_rounds_for_player(player, min_count, max_count):
         next_input = get_next_input(min_count, max_count)
         try:
             if not player.program.isalive():
-                print('P{} no longer alive'.format(player.index))
+                print(f'P{player.index} no longer alive')
                 continue
             print_next_input(player, **next_input)
             player.program.sendline(','.join((
@@ -147,25 +146,22 @@ def run_rounds_for_player(player, min_count, max_count):
                 player.total_incorrect += 1
                 print('×')
         except pexpect.exceptions.TIMEOUT:
-            print('P{} has timed out for {}'.format(
-                player.index,
-                next_input))
+            print(f'P{player.index} has timed out for {next_input}')
         except timer.TimeoutError:
             print()
-            print('referee timeout expired; ending P{}'.format(
-                player.index))
+            print(f'referee timeout expired; ending P{player.index}')
             print()
             break
         except Exception as error:
             player.total_error += 1
-            print('error for P{}: {}'.format(player.index, error))
+            print(f'error for P{player.index}: {error}')
 
 
 # Print the parameters for this duel
 def print_duel_info(players, min_count, max_count, timeout):
-    print('min count per coin type: {:,}'.format(min_count))
-    print('max count per coin type: {:,}'.format(max_count))
-    print('timeout per player: {:,} s'.format(timeout))
+    print(f'min count per coin type: {min_count:,}')
+    print(f'max count per coin type: {max_count:,}')
+    print(f'timeout per player: {timeout:,} s')
     print()
     print_player_info(players)
 
@@ -174,18 +170,18 @@ def print_duel_info(players, min_count, max_count, timeout):
 def print_player_info(players):
     for p, player in enumerate(players):
         player.index = p
-        print('P{}: {}'.format(player.index, player.path))
+        print(f'P{player.index}: {player.path}')
     print()
 
 
 # Print the final correct/incorrect stats for each player
 def print_duel_results(players):
     for p, player in enumerate(players):
-        print('P{} results:'.format(player.index))
-        print('  correct = {:,}'.format(player.total_correct))
-        print('  incorrect = {:,}'.format(player.total_incorrect))
-        print('  success = {:,.1f} %'.format(player.get_success_rate() * 100))
-        print('  error = {:,}'.format(player.total_error))
+        print(f'P{player.index} results:')
+        print(f'  correct = {player.total_correct:,}')
+        print(f'  incorrect = {player.total_incorrect:,}')
+        print(f'  success = {player.get_success_rate() * 100:,.1f} %')
+        print(f'  error = {player.total_error:,}')
 
 
 def run_duel(players, min_count, max_count, timeout):
