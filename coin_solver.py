@@ -89,7 +89,7 @@ def perform_adjustment_substitutions(coin_counts, total_coin_amount):
         if round(amount_diff % coin_sum, 2) == 0:
             for coin_type, coin_diff in coin_combination.items():
                 coin_counts[coin_type] += (coin_diff *
-                                           int(amount_diff // coin_sum))
+                                           (amount_diff // coin_sum))
             break
 
 
