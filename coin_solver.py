@@ -32,7 +32,7 @@ COIN_SUMS = collections.OrderedDict(sorted({
     0.65: {'quarters': 4, 'dimes': -3, 'nickels': -1},
     0.75: {'quarters': 4, 'dimes': -1, 'nickels': -3},
     0.85: {'quarters': 5, 'dimes': -3, 'nickels': -2},
-    0.95: {'quarters': 5, 'dimes': -3, 'nickels': -0}
+    0.95: {'quarters': 6, 'dimes': -5, 'nickels': -1}
 }.items()))
 
 
