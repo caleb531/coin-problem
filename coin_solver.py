@@ -94,7 +94,7 @@ def perform_adjustment_substitutions(coin_counts, total_coin_amount):
             break
 
 
-def get_partial_sums(count):
+def get_partial_sums(count, amount):
 
     map = collections.defaultdict(list)
     sums = set()
@@ -105,7 +105,8 @@ def get_partial_sums(count):
             map[i + j].append((i, j))
             if partial_sum in map:
                 for x, y in map[partial_sum]:
-                    sums.update(itertools.permutations((i, j, x, y)))
+                    if (y * AMOUNT_VALUES[3]) <= amount:
+                        sums.update(itertools.permutations((i, j, x, y)))
 
     return sums
 
