@@ -14,7 +14,7 @@ from player import Player
 # Constants
 PENNY_VALUE = 0.01
 NICKEL_VALUE = 0.05
-DIME_VALUE = 0.1
+DIME_VALUE = 0.10
 QUARTER_VALUE = 0.25
 
 
