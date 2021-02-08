@@ -48,8 +48,18 @@ class TestCoinSolver(unittest.TestCase):
         current_count = self.get_current_count(counts)
         current_amount = self.get_current_amount(counts)
         counts_tuple = CoinCounts(**counts)
-        self.assertEqual(current_count, total_count, counts_tuple)
-        self.assertEqual(current_amount, total_amount, counts_tuple)
+        self.assertEqual(current_count,
+                         total_count,
+                         f'coin count mismatch: {counts_tuple}; '
+                         f'valid: ${total_amount}, '
+                         f'{total_count}, '
+                         f'{counts_list}')
+        self.assertEqual(current_amount,
+                         total_amount,
+                         f'coin count mismatch: {counts_tuple}; '
+                         f'valid: ${total_amount}, '
+                         f'{total_count}, '
+                         f'{counts_list}')
         self.assertTrue(all(count >= 0 for count in counts.values()),
                         f'coin count is negative: {counts_tuple}; '
                         f'valid: ${total_amount}, '
