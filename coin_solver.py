@@ -112,16 +112,15 @@ def get_partial_sums(count):
 
 # Search all possible permutations of coin counts until a satisfactory
 # permutation is found
-def brute_force(coin_counts, total_coin_count, total_coin_amount):
+def brute_force(total_coin_count, total_coin_amount):
 
     count_permutations = get_partial_sums(total_coin_count)
     counts_list = next(
         p for p in count_permutations
         if round(sum(c * v for c, v in zip(p, AMOUNT_VALUES)), 2)
         == total_coin_amount)
-    coin_counts.update(
-        {coin_type: coin_count
-         for coin_count, coin_type in zip(counts_list, COIN_TYPES)})
+    return {coin_type: coin_count
+            for coin_count, coin_type in zip(counts_list, COIN_TYPES)}
 
 
 # Return a JSON object of coin counts
@@ -156,8 +155,7 @@ def get_coin_counts(total_coin_count, total_coin_amount):
     if (get_current_count(coin_counts) != total_coin_count
             or get_current_amount(coin_counts) != total_coin_amount
             or any(count < 0 for count in coin_counts.values())):
-        brute_force(
-            coin_counts=coin_counts,
+        coin_counts = brute_force(
             total_coin_count=total_coin_count,
             total_coin_amount=total_coin_amount)
 
