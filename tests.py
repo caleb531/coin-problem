@@ -61,7 +61,7 @@ class TestCoinSolver(unittest.TestCase):
                     self.assert_single_test_case(counts_list)
 
     def test_permutations(self):
-        for counts_list in itertools.product(range(12), repeat=4):
+        for counts_list in itertools.product(range(15), repeat=4):
             with self.subTest(counts=counts_list):
                 self.assert_single_test_case(counts_list)
 
