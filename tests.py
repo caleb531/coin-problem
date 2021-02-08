@@ -51,7 +51,10 @@ class TestCoinSolver(unittest.TestCase):
         self.assertEqual(current_count, total_count, counts_tuple)
         self.assertEqual(current_amount, total_amount, counts_tuple)
         self.assertTrue(all(count >= 0 for count in counts.values()),
-                        f'coin count is negative: {counts_tuple}')
+                        f'coin count is negative: {counts_tuple}; '
+                        f'valid: ${total_amount}, '
+                        f'{total_count}, '
+                        f'{counts_list}')
 
     def test_handpicked(self):
         with open('test_cases.json', 'r') as test_cases_file:
