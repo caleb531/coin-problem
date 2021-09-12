@@ -163,4 +163,8 @@ def get_coin_counts(total_coin_count, total_coin_amount):
             total_coin_count=total_coin_count,
             total_coin_amount=total_coin_amount)
 
+    # Handle case where there aren't enough coins to equal amount
+    if all(count == 0 for count in coin_counts.values()):
+        return None
+
     return coin_counts

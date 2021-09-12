@@ -33,6 +33,10 @@ def main(total_coin_count, total_coin_amount):
 
     coin_counts = coin_solver.get_coin_counts(
         total_coin_count, total_coin_amount)
+    if not coin_counts:
+        print('No solution')
+        return
+
     current_coin_count = coin_solver.get_current_count(coin_counts)
     current_coin_amount = coin_solver.get_current_amount(coin_counts)
 
