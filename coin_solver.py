@@ -116,13 +116,10 @@ def get_partial_sums(count, amount):
 def brute_force(total_coin_count, total_coin_amount):
 
     count_permutations = get_partial_sums(total_coin_count, total_coin_amount)
-    try:
-        counts_list = next(
-            p for p in count_permutations
-            if round(sum(c * v for c, v in zip(p, AMOUNT_VALUES)), 2)
-            == total_coin_amount)
-    except StopIteration:
-        return collections.defaultdict(int)
+    counts_list = next(
+        p for p in count_permutations
+        if round(sum(c * v for c, v in zip(p, AMOUNT_VALUES)), 2)
+        == total_coin_amount)
     return {coin_type: coin_count
             for coin_count, coin_type in zip(counts_list, COIN_TYPES)}
 
