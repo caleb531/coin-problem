@@ -1,6 +1,6 @@
 # Coin Problem
 
-*Copyright 2019-2021 Caleb Evans*  
+*Copyright 2019-2022 Caleb Evans*  
 *Released under the MIT license*
 
 ## Inspiration
