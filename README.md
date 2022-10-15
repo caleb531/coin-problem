@@ -68,4 +68,4 @@ python -m coinproblem.referee ./coinproblem/my-player.py
 nose2
 ```
 
-To add additional test cases, please append an array of `[penny, nickel, dime quarter]` counts to the JSON array in `test_cases.json`.
+To add additional test cases, please append an array of `[penny, nickel, dime, quarter]` counts to the JSON array in `test_cases.json`.
