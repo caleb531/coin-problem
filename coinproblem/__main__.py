@@ -13,14 +13,12 @@ def get_cli_args():
     parser.add_argument(
         '--total-coin-count',
         '-c',
-        type=int,
-        default=1692)
+        type=int)
 
     parser.add_argument(
         '--total-coin-amount',
         '-a',
-        type=float,
-        default=100.54)
+        type=float)
 
     return parser.parse_args()
 
