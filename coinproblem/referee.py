@@ -7,8 +7,8 @@ import random
 
 import pexpect
 
-import timer
-from player import Player
+import coinproblem.timer as timer
+from coinproblem.player import Player
 
 
 # Constants

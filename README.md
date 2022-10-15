@@ -19,21 +19,53 @@ and any dollar amount.
 
 ## Usage
 
-### Run program
+### Set up virtualenv
 
 ```sh
-./__main__.py -c 1692 -a 100.54
+virtualenv --python=python3 .virtualenv
+source .virtualenv/bin/activate
+pip install -r requirements.txt
+```
+
+### Run solver program
+
+```sh
+python -m coinproblem -c 1692 -a 100.54
 ```
 
 #### Options
 
-- `-c`: The total number of coins (_i.e._ the coin count)
-- `-a` the total dollar value of all coins combined (_i.e._ the coin amount)
+- `--total-coin-count` / `-c`: The total number of coins (_i.e._ the coin
+  count)
+- `--total-coin-amount` / `-a`: the total dollar value of all coins combined
+  (_i.e._ the coin amount)
+
+### Run duel program
+
+The referee program accepts a variable number of executables that will be pit
+against each other. The referee program _must_ be run as a module via the
+`python -m` command.
+
+Please refer to the [Player Program Specification](SPEC.md) to learn how to
+write your own player programs.
+
+```sh
+python -m coinproblem.referee ./coinproblem/my-player.py
+```
+
+### Options
+
+- `--timeout` / `-t` (default: 10): The number of seconds each player will run before timing
+  out
+- `--min-count` / `--min` (default: 0): The minimum number of coins per coin type to be
+  generated
+- `--max-count`/ `--max` (default: 100): The maximum number of coins per coin
+  type to be generated
 
 ### Run tests
 
 ```sh
-./tests.py
+nose2
 ```
 
 To add additional test cases, please append an array of `[penny, nickel, dime quarter]` counts to the JSON array in `test_cases.json`.

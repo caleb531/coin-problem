@@ -2,10 +2,12 @@
 
 import itertools
 import json
+import os
+import os.path
 import unittest
 from collections import namedtuple
 
-import coin_solver
+import coinproblem.solver as solver
 
 
 # Constants
@@ -42,7 +44,7 @@ class TestCoinSolver(unittest.TestCase):
         total_count = sum(counts_list)
         total_amount = round(sum(count * amount for count, amount in
                                  zip(counts_list, AMOUNTS_LIST)), 2)
-        counts = coin_solver.get_coin_counts(
+        counts = solver.get_coin_counts(
             total_coin_count=total_count,
             total_coin_amount=total_amount)
         current_count = self.get_current_count(counts)
@@ -67,7 +69,9 @@ class TestCoinSolver(unittest.TestCase):
                         f'{counts_list}')
 
     def test_handpicked(self):
-        with open('test_cases.json', 'r') as test_cases_file:
+        test_dir = os.path.dirname(__file__)
+        test_cases_path = os.path.join(test_dir, 'test_cases.json')
+        with open(test_cases_path, 'r') as test_cases_file:
             test_cases = json.load(test_cases_file)
             for counts_list in test_cases:
                 with self.subTest(counts=counts_list):
