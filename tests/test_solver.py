@@ -18,12 +18,12 @@ QUARTER_VALUE = 0.25
 
 AMOUNTS_LIST = [PENNY_VALUE, NICKEL_VALUE, DIME_VALUE, QUARTER_VALUE]
 
-CoinCounts = namedtuple('CoinCounts', [
+CoinCounts = namedtuple('CoinCounts', (
     'pennies',
     'nickels',
     'dimes',
     'quarters'
-])
+))
 
 
 class TestCoinSolver(unittest.TestCase):
