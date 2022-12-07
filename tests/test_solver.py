@@ -74,13 +74,11 @@ class TestCoinSolver(unittest.TestCase):
         with open(test_cases_path, 'r') as test_cases_file:
             test_cases = json.load(test_cases_file)
             for counts_list in test_cases:
-                with self.subTest(counts=counts_list):
-                    self.assert_single_test_case(counts_list)
+                yield self.assert_single_test_case, (counts_list,)
 
     def test_permutations(self):
         for counts_list in itertools.product(range(15), repeat=4):
-            with self.subTest(counts=counts_list):
-                self.assert_single_test_case(counts_list)
+            yield self.assert_single_test_case, (counts_list,)
 
 
 if __name__ == '__main__':

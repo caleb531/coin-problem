@@ -65,7 +65,7 @@ python -m coinproblem.referee ./coinproblem/my-player.py
 ### Run tests
 
 ```sh
-nose2
+nose2 --quiet
 ```
 
 To add additional test cases, please append an array of `[penny, nickel, dime, quarter]` counts to the JSON array in `test_cases.json`.
