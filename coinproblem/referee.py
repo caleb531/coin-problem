@@ -24,7 +24,6 @@ next_input_index = 0
 
 # Parse command-line arguments passed to referee player
 def parse_cli_args():
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -63,13 +62,11 @@ def parse_cli_args():
 
 # Return the current number of coins
 def get_total_count(coin_counts):
-
     return sum(coin_counts.values())
 
 
 # Return the current dollar amount sum for the given coin counts
 def get_total_amount(coin_counts):
-
     return round(
         sum(
             (
@@ -84,7 +81,6 @@ def get_total_amount(coin_counts):
 
 
 def generate_new_input(min_count, max_count):
-
     coin_counts = {
         "pennies": random.randint(min_count, max_count),
         "nickels": random.randint(min_count, max_count),
@@ -198,7 +194,6 @@ def print_duel_results(players):
 
 
 def run_duel(players, min_count, max_count, timeout):
-
     print_duel_info(players, min_count, max_count, timeout)
 
     for player in players:
@@ -212,7 +207,6 @@ def run_duel(players, min_count, max_count, timeout):
 
 
 def main():
-
     try:
         params = parse_cli_args()
         run_duel(**vars(params))

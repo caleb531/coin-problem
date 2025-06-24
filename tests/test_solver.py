@@ -21,7 +21,6 @@ CoinCounts = namedtuple("CoinCounts", ("pennies", "nickels", "dimes", "quarters"
 
 
 class TestCoinSolver(unittest.TestCase):
-
     # Return the current number of coins
     def get_current_count(self, coin_counts):
         return sum(coin_counts.values())

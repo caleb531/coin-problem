@@ -7,7 +7,6 @@ import coinproblem.solver as solver
 
 # Read and parse arguments to the CLI program
 def get_cli_args():
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--total-coin-count", "-c", type=int)
@@ -18,7 +17,6 @@ def get_cli_args():
 
 
 def main(total_coin_count, total_coin_amount):
-
     print("Total Coin Count:".ljust(18), f"{total_coin_count:,}")
     print("Total Coin Amount:".ljust(18), f"${total_coin_amount:.2f}")
     print()
@@ -33,7 +31,7 @@ def main(total_coin_count, total_coin_amount):
 
     print(
         "\n".join(
-            f'{name.capitalize() + ":":<9}{count:,}'
+            f"{name.capitalize() + ':':<9}{count:,}"
             for name, count in coin_counts.items()
         )
     )

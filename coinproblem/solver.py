@@ -42,13 +42,11 @@ COIN_SUMS = collections.OrderedDict(
 
 # Return the current number of coins
 def get_current_count(coin_counts):
-
     return sum(coin_counts.values())
 
 
 # Return the current dollar amount sum for the given coin counts
 def get_current_amount(coin_counts):
-
     return round(
         sum(
             (
@@ -65,7 +63,6 @@ def get_current_amount(coin_counts):
 # Compute the required number of pennies by using the least-significant decimal
 # digit of the total amount
 def get_penny_count(total_coin_amount):
-
     adjusted_coin_amount = round(total_coin_amount * 10, 2)
     return round((adjusted_coin_amount - math.floor(adjusted_coin_amount)) * 10) % 5
 
@@ -75,7 +72,6 @@ def get_penny_count(total_coin_amount):
 def converge_to_amount(
     coin_counts, total_coin_amount, coin_to_replace, coin_to_replace_with
 ):
-
     while (
         get_current_amount(coin_counts) > total_coin_amount
         and coin_counts[coin_to_replace] > 0
@@ -88,7 +84,6 @@ def converge_to_amount(
 # less than a dollar, so to narrow in on that exact value with greater
 # precision, perform coin substitions that are known to achieve that diff
 def perform_adjustment_substitutions(coin_counts, total_coin_amount):
-
     current_amount = get_current_amount(coin_counts)
     amount_diff = round(total_coin_amount - current_amount, 2)
 
@@ -105,7 +100,6 @@ def perform_adjustment_substitutions(coin_counts, total_coin_amount):
 
 
 def get_partial_sums(count, amount):
-
     map = collections.defaultdict(list)
     sums = set()
 
@@ -124,7 +118,6 @@ def get_partial_sums(count, amount):
 # Search all possible permutations of coin counts until a satisfactory
 # permutation is found
 def brute_force(total_coin_count, total_coin_amount):
-
     count_permutations = get_partial_sums(total_coin_count, total_coin_amount)
     counts_list = next(
         p
@@ -138,7 +131,6 @@ def brute_force(total_coin_count, total_coin_amount):
 
 # Return a JSON object of coin counts
 def get_coin_counts(total_coin_count, total_coin_amount):
-
     coin_counts = {}
     coin_counts["pennies"] = get_penny_count(total_coin_amount)
 

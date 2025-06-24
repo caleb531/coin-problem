@@ -8,7 +8,6 @@ import solver
 
 
 def main():
-
     try:
         while True:
             count, amount = input("").split(",")

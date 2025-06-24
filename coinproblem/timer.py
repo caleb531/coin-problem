@@ -10,7 +10,6 @@ class TimeoutError(Exception):
 
 
 class Timer:
-
     def __init__(self, seconds=1, error_message="TimeoutError"):
         self.seconds = seconds
         self.error_message = error_message
