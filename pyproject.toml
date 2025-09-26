@@ -19,6 +19,7 @@ dev = [
     "nose2==0.15.1",
     "pexpect==4.7.0",
     "ruff>=0.12.0",
+    "tomli>=2.2.1",
     "typing-extensions==4.9.0",
 ]
 
@@ -36,4 +37,16 @@ select = [
     "I",
     # perflint
     "PERF",
+]
+
+# Coverage configuration migrated from .coveragerc
+[tool.coverage.run]
+branch = true
+include = ["coinproblem/*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "pass",
 ]
