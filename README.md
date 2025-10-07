@@ -19,18 +19,25 @@ and any dollar amount.
 
 ## Usage
 
-### Set up virtualenv
+### Install uv
+
+This project uses [uv](https://docs.astral.sh/uv/) to manage the virtual
+environment and project dependencies. You can install it like so:
+
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Set up environment and install dependencies
 
 ```sh
-virtualenv --python=python3 .virtualenv
-source .virtualenv/bin/activate
-pip install -r requirements.txt
+uv sync
 ```
 
 ### Run solver program
 
 ```sh
-python -m coinproblem -c 1692 -a 100.54
+uv run -m coinproblem -c 1692 -a 100.54
 ```
 
 #### Options
@@ -50,7 +57,7 @@ Please refer to the [Player Program Specification](SPEC.md) to learn how to
 write your own player programs.
 
 ```sh
-python -m coinproblem.referee ./coinproblem/my-player.py
+uv run -m coinproblem.referee ./coinproblem/my-player.py
 ```
 
 ### Options
@@ -65,7 +72,7 @@ python -m coinproblem.referee ./coinproblem/my-player.py
 ### Run tests
 
 ```sh
-nose2 --quiet
+uv run nose2 --quiet
 ```
 
 To add additional test cases, please append an array of `[penny, nickel, dime, quarter]` counts to the JSON array in `test_cases.json`.
