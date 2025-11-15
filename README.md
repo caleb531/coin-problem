@@ -72,7 +72,7 @@ uv run -m coinproblem.referee ./coinproblem/my-player.py
 ### Run tests
 
 ```sh
-uv run nose2 --quiet
+uv run pytest --cov --cov-report=term-missing
 ```
 
 To add additional test cases, please append an array of `[penny, nickel, dime, quarter]` counts to the JSON array in `test_cases.json`.
