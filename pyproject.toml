@@ -13,6 +13,17 @@ maintainers = [
 license = "MIT"
 dependencies = []
 
+[project.scripts]
+coin-problem = "coinproblem.__main__:main"
+
+[build-system]
+requires = ["uv_build>=0.9.6,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "coinproblem"
+module-root = ""
+
 [dependency-groups]
 dev = [
     "pexpect==4.7.0",
