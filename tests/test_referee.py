@@ -61,26 +61,23 @@ def test_generate_new_input(mock_randint):
     assert mock_randint.call_count == 4
 
 
-def test_next_input_caches():
+@patch(
+    "coinproblem.referee.generate_new_input", return_value={"count": 6, "amount": 0.56}
+)
+def test_next_input_caches(generate_new_input):
     """Should cache generated input values for reuse."""
-    expected = {"count": 6, "amount": 0.56}
 
-    with patch(
-        "coinproblem.referee.generate_new_input",
-        return_value=expected,
-    ) as mock_generate:
-        first = referee.get_next_input(min_count=0, max_count=5)
-        assert first is expected
-        assert referee.inputs == [expected]
-        assert referee.next_input_index == 1
-        mock_generate.assert_called_once_with(0, 5)
+    first = referee.get_next_input(min_count=0, max_count=5)
+    assert first is generate_new_input.return_value
+    assert referee.inputs == [generate_new_input.return_value]
+    assert referee.next_input_index == 1
+    generate_new_input.assert_called_once_with(0, 5)
 
     referee.next_input_index = 0
 
-    with patch("coinproblem.referee.generate_new_input") as mock_generate_again:
-        cached = referee.get_next_input(min_count=0, max_count=5)
-        assert cached is expected
-        assert mock_generate_again.call_count == 0
+    cached = referee.get_next_input(min_count=0, max_count=5)
+    assert cached is generate_new_input.return_value
+    assert generate_new_input.call_count == 1
 
 
 def test_next_input_cycle():
@@ -138,19 +135,19 @@ class DummyPlayer:
         return 0.0
 
 
-def test_run_duel(capsys):
+@patch("coinproblem.referee.timer.Timer", DummyTimer)
+@patch("coinproblem.referee.run_rounds_for_player")
+@patch("coinproblem.referee.reset_inputs")
+def test_run_duel(mock_reset, mock_run_rounds, capsys):
     """Should run the duel with fresh inputs per player."""
     players = [DummyPlayer("player-one"), DummyPlayer("player-two")]
 
-    with patch("coinproblem.referee.reset_inputs") as mock_reset:
-        with patch("coinproblem.referee.run_rounds_for_player") as mock_run_rounds:
-            with patch("coinproblem.referee.timer.Timer", DummyTimer):
-                result = referee.run_duel(
-                    players,
-                    min_count=1,
-                    max_count=5,
-                    timeout=9,
-                )
+    result = referee.run_duel(
+        players,
+        min_count=1,
+        max_count=5,
+        timeout=9,
+    )
 
     output = capsys.readouterr().out
 
@@ -199,7 +196,8 @@ class FakePlayer:
         self.program = self._program
 
 
-def test_run_rounds_records_correct():
+@patch("coinproblem.referee.get_next_input")
+def test_run_rounds_records_correct(get_next_input):
     """Should record a correct response from the player."""
     expected_counts = {"pennies": 3, "nickels": 0, "dimes": 0, "quarters": 0}
     sample_input = {"count": 3, "amount": 0.03}
@@ -209,11 +207,9 @@ def test_run_rounds_records_correct():
     )
     player = FakePlayer(program)
 
-    with patch(
-        "coinproblem.referee.get_next_input",
-        side_effect=[sample_input, sample_input],
-    ):
-        referee.run_rounds_for_player(player, min_count=0, max_count=1)
+    get_next_input.side_effect = [sample_input, sample_input]
+
+    referee.run_rounds_for_player(player, min_count=0, max_count=1)
 
     assert player.total_correct == 1
     assert player.total_incorrect == 0
@@ -221,7 +217,8 @@ def test_run_rounds_records_correct():
     assert player.program.sendline.call_args_list[0] == call("3,0.03")
 
 
-def test_run_rounds_records_incorrect():
+@patch("coinproblem.referee.get_next_input")
+def test_run_rounds_records_incorrect(get_next_input):
     """Should record an incorrect response from the player."""
     wrong_counts = {"pennies": 2, "nickels": 0, "dimes": 0, "quarters": 0}
     sample_input = {"count": 3, "amount": 0.03}
@@ -231,30 +228,27 @@ def test_run_rounds_records_incorrect():
     )
     player = FakePlayer(program)
 
-    with patch(
-        "coinproblem.referee.get_next_input",
-        side_effect=[sample_input, sample_input],
-    ):
-        referee.run_rounds_for_player(player, min_count=0, max_count=1)
+    get_next_input.side_effect = [sample_input, sample_input]
+
+    referee.run_rounds_for_player(player, min_count=0, max_count=1)
 
     assert player.total_correct == 0
     assert player.total_incorrect == 1
     assert player.total_error == 0
 
 
-def test_run_rounds_records_error():
+@patch("coinproblem.referee.get_next_input")
+def test_run_rounds_records_error(get_next_input):
     """Should record an error when the player emits invalid JSON."""
     program = build_fake_program(["not-json"], timer.TimeoutError("timer"))
     player = FakePlayer(program)
 
-    with patch(
-        "coinproblem.referee.get_next_input",
-        side_effect=[
-            {"count": 1, "amount": 0.01},
-            {"count": 1, "amount": 0.01},
-        ],
-    ):
-        referee.run_rounds_for_player(player, min_count=0, max_count=1)
+    get_next_input.side_effect = [
+        {"count": 1, "amount": 0.01},
+        {"count": 1, "amount": 0.01},
+    ]
+
+    referee.run_rounds_for_player(player, min_count=0, max_count=1)
 
     assert player.total_correct == 0
     assert player.total_incorrect == 0
